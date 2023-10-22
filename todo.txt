@@ -1,0 +1,27 @@
+TODO:
+1. Stopien trudnosci przepisu (jakies ui i dodac jeden field z difficulty) //a
+2. Ilosci? - skladniki do reworka by byla ich ilosc //b
+3. Page ktory wyswietla przepisy ze skladnikow ktore chcemy uzyc //b
+4. Historia - Zaznaczenie przepisow ktore sie juz wykonalo //b
+5. Usuwanie skladnikow z posiadanych skladnikow po wykonaniu przepisu //b
+6. Ocena przepisu - twoja ocena //a
+7. Admin panel //a
+8. Kategorie przepisow //a
+9. Change photo button disabled zanim photo dodane //a
+
+
+a) Rzeczy ktore mozna napisac od buta: Checked
+- zrobieni roli admina Checked
+- Admin panel (ROLE) Checked
+- Change photo Checked
+- Stopien trudnosci przepisu (jakies ui i dodac jeden field z difficulty) Checked
+- Kategorie Checked
+
+b) Rzeczy zwiazane z reworkiem systemu skladnikow:
+1. Formularz do zmiany, ilosci
+2. Rework myprofile -> dodanie checkbox
+3. Ogarniecie firebase, rework fieldow przepisowych na nowe
+4. Rework recipe page na nowych typach
+5. Page ktory wyswietla przepisy ze skladnikow ktore chcemy uzyc
+6. Usuwnie skladnikow po zakonczeniu przepisu co za tym idzie dodanie zaznaczenia uzycia przepisu
+7. Historia na my profile uzytych przepisow -> Moja ocena

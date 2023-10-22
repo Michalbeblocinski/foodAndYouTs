@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background-color: #0a0a0a;
+}
+
+.custom-scrollbar::-webkit-scrollbar,
+.MuiInputBase-input::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.MuiInputBase-input::-webkit-scrollbar-thumb {
+  background-color: #4b5563 !important;
+  border-radius: 9999px !important;
+}
+
+.custom-scrollbar li:hover .group:opacity-100,
+.MuiInputBase-input li:hover .group:opacity-100 {
+  opacity: 1 !important;
+  cursor: pointer !important;
+}
+
+.white-select svg{
+    color: white !important;
+}
