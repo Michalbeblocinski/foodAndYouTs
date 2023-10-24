@@ -114,27 +114,6 @@ export const ProfilePhotoButton: React.FC<ProfilePhotoButtonProps> = ({
             onChange={handleFileChange}
           />
         </Button>
-        {selectedFile && (<Button
-            type="submit"
-            variant="contained"
-            style={{
-              marginTop: "1rem",
-              position: "absolute",
-              bottom: "20px",
-              width: "calc(100% - 40px)",
-            }}
-            sx={{
-              border: "1px solid #B1A4A4",
-              background: "#000",
-              boxShadow: "0px 0px 4px 3px rgba(97, 92, 92, 0.44)",
-              "&:hover": {
-                background: "#161616",
-              },
-            }}
-        >
-          {buttonLabel}
-        </Button>)}
-        {!selectedFile && (
         <Button
           type="submit"
           variant="contained"
@@ -143,20 +122,19 @@ export const ProfilePhotoButton: React.FC<ProfilePhotoButtonProps> = ({
             position: "absolute",
             bottom: "20px",
             width: "calc(100% - 40px)",
+            cursor: `${!selectedFile ? "not-allowed" : "pointer"}`,
           }}
           sx={{
             border: "1px solid #B1A4A4",
-            background: "#200",
+            background: `${!selectedFile ? "#200" : "#000"}`,
             boxShadow: "0px 0px 4px 3px rgba(97, 92, 92, 0.44)",
-            cursor: "not-allowed",
             "&:hover": {
-              background: "#200",
-              boxShadow: "0px 0px 4px 3px rgba(97, 92, 92, 0.44)",
+              background: `${!selectedFile ? "#200" : "#161616"}`,
             },
           }}
         >
           {buttonLabel}
-        </Button>)}
+        </Button>
       </form>
     </div>
   );

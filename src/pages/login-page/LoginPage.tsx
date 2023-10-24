@@ -16,6 +16,7 @@ import { UserApp } from "../../utils/types/user";
 import { useDispatch } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
 import { createUserDocumentFromAuth, db } from "../../firebaseConfig/config";
+import { Recipe } from "../../utils/types/recipe";
 
 export const LoginPage: React.FC = () => {
   const auth = getAuth();
@@ -53,9 +54,12 @@ export const LoginPage: React.FC = () => {
             lastName: userData.lastName,
             photoUrl: userData.photoUrl,
             ingredients: userData.ingredients,
+            wantedIngredients: userData.wantedIngredients,
             recipes: userData.recipes,
             follows: userData.follows,
             role: userData.role,
+            recipesDone: userData.recipesDone,
+            recipesDoneStars: userData.recipesDoneStars,
           };
           dispatch(setLogin(loggedUser));
         } else {
@@ -66,19 +70,29 @@ export const LoginPage: React.FC = () => {
             lastName: null,
             photoUrl: null,
             ingredients: null,
+            wantedIngredients: null,
             recipes: null,
             follows: [],
             role: "User",
+            recipesDone: [],
+            recipesDoneStars: [],
           };
           dispatch(setLogin(loggedUser));
-          const { username,role } = loggedUser;
+          const { username, role, recipesDone, recipesDoneStars } = loggedUser;
           let smallDataUser = {
             uid: `${response.user.uid}`,
             username: `${response.user.displayName}`,
             email: `${response.user.email}`,
             role: "User",
+            recipesDone: [],
           };
-          await createUserDocumentFromAuth(smallDataUser, role,{ username });
+          await createUserDocumentFromAuth(
+            smallDataUser,
+            role,
+            recipesDone as Recipe[],
+            recipesDoneStars as number[],
+            { username },
+          );
         }
       })
       .catch((error) => {

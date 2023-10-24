@@ -14,6 +14,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { Recipe } from "../utils/types/recipe";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzAnEh6C_Ah80VilDQGGCO2pEPMqxpevM",
@@ -41,7 +42,9 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 export const createUserDocumentFromAuth = async (
   userAuth: any,
   role: string,
-  addictionalInformation = {}
+  recipesDone: Recipe[],
+  recipesDoneStars: number[],
+  addictionalInformation = {},
 ): Promise<DocumentReference | undefined> => {
   if (!userAuth) return;
   const userDocRef = doc(db, "users", userAuth.uid);
@@ -57,6 +60,8 @@ export const createUserDocumentFromAuth = async (
         email,
         createdAt,
         role,
+        recipesDone,
+        recipesDoneStars,
         ...addictionalInformation,
       });
     } catch (error) {
@@ -68,7 +73,7 @@ export const createUserDocumentFromAuth = async (
 
 export const createAuthUserWithEmailAndPassword = async (
   email: string,
-  password: string
+  password: string,
 ) => {
   if (!email || !password) return;
 
@@ -77,7 +82,7 @@ export const createAuthUserWithEmailAndPassword = async (
 
 export const signInAuthUserWithEmailAndPassword = async (
   email: string,
-  password: string
+  password: string,
 ) => {
   if (!email || !password) return;
 

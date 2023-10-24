@@ -12,9 +12,10 @@ import { ProfilePage } from "./pages/profile-page";
 import { AddRecipePage } from "./pages/add-recipe-page";
 import { FollowingUsersRecipesPage } from "./pages/following-users-recipes-page";
 import { RecipesWithYourIngredientsPage } from "./pages/recipes-with-your-ingredients-page";
-import {AdminPage} from "./pages/admin-page";
-import {BreakfastPage} from "./pages/categories/breakfastPage";
-import {LunchPage, SupperPage} from "./pages/categories";
+import { AdminPage } from "./pages/admin-page";
+import { BreakfastPage } from "./pages/categories/breakfastPage";
+import { LunchPage, SupperPage } from "./pages/categories";
+import { RecipesWithWantedIngredientsPage } from "./pages/recipes-with-wanted-ingredients-page";
 
 const App: React.FC = () => {
   return (
@@ -54,7 +55,8 @@ const App: React.FC = () => {
                 <ShoppinglistPage />
               </AuthRoute>
             }
-          />  <Route
+          />{" "}
+          <Route
             path="/admin"
             element={
               <AuthRoute>
@@ -70,7 +72,7 @@ const App: React.FC = () => {
               </AuthRoute>
             }
           />
-            <Route
+          <Route
             path="/breakfast"
             element={
               <AuthRoute>
@@ -78,7 +80,7 @@ const App: React.FC = () => {
               </AuthRoute>
             }
           />
-            <Route
+          <Route
             path="/supper"
             element={
               <AuthRoute>
@@ -86,7 +88,7 @@ const App: React.FC = () => {
               </AuthRoute>
             }
           />
-            <Route
+          <Route
             path="/lunch"
             element={
               <AuthRoute>
@@ -107,6 +109,14 @@ const App: React.FC = () => {
             element={
               <AuthRoute>
                 <RecipesWithYourIngredientsPage />
+              </AuthRoute>
+            }
+          />{" "}
+          <Route
+            path="/recipes-with-wanted-ingredients"
+            element={
+              <AuthRoute>
+                <RecipesWithWantedIngredientsPage />
               </AuthRoute>
             }
           />

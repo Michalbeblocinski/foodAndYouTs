@@ -7,17 +7,138 @@ import { Recipe } from "../../utils/types/recipe";
 import starWhite from "../../utils/starWhite.svg";
 import starBorderOnly from "../../utils/starBorderOnly.svg";
 import { useSelector } from "react-redux";
-import { getUser } from "../../store/authSlice";
+import {
+  changeUserIngredients,
+  changeUserRecipesDone,
+  changeUserRecipesDoneStars,
+  getUser,
+  setLogin,
+} from "../../store/authSlice";
 import { UserApp } from "../../utils/types/user";
+import { CustomButton } from "../../components/custome-button";
+import { useDispatch } from "react-redux";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { DisabledCustomButton } from "../../components/disabled-custom-button";
 
 export const RecipePage: React.FC = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [recipeData, setRecipeData] = useState<Recipe | undefined>(undefined);
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [numberOfStarsState, setNumberOfStarsState] = useState<number>(5);
   const [StarsState, setStarsState] = useState<number>(5);
+  const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
   const currentUser: UserApp = useSelector(getUser) as UserApp;
+  const [userIngredients, setUserIngredients] = useState<any[]>(
+    currentUser.ingredients || [],
+  );
+  const initialValues = {
+    rating: 5,
+  };
+
+  const validationSchema = Yup.object().shape({
+    rating: Yup.number()
+      .min(1, "Rating must be at least 1")
+      .max(5, "Rating cannot be more than 5")
+      .required("Rating is required"),
+  });
+
+  const handleIDidRecipe = async (values: { rating: number }) => {
+    setButtonClicked(true);
+    if (recipeData) {
+      const requiredIngredients: Array<string> = recipeData.ingredients;
+
+      const updatedUserIngredients = [...userIngredients];
+
+      const hasEnoughIngredients: boolean = requiredIngredients.every(
+        (ingredient: string, index: number) => {
+          if (index % 2 === 0) {
+            const ingredientName: string = ingredient;
+            const userIngredients: any[] = updatedUserIngredients;
+
+            const userIngredientIndex: number =
+              userIngredients.indexOf(ingredientName);
+
+            if (userIngredientIndex !== -1) {
+              const ingredientAmount: string = requiredIngredients[index + 1];
+              if (
+                userIngredients[userIngredientIndex + 1] >= ingredientAmount
+              ) {
+                const amountToSubtract = parseInt(ingredientAmount);
+
+                userIngredients[userIngredientIndex + 1] -= amountToSubtract;
+
+                if (userIngredients[userIngredientIndex + 1] <= 0) {
+                  userIngredients.splice(userIngredientIndex, 2);
+                }
+              } else {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          }
+          return true;
+        },
+      );
+
+      if (hasEnoughIngredients) {
+        dispatch(
+          changeUserIngredients({ ingredients: updatedUserIngredients }),
+        );
+
+        setStarsState(values.rating);
+        try {
+          const uid: string = id as string;
+          const userDocRef = doc(db, "users", currentUser._id);
+
+          if (
+            currentUser.recipesDone &&
+            currentUser.recipesDone.filter(
+              (recipe: Recipe): boolean => recipe._id === uid,
+            ).length > 0
+          ) {
+            alert("Recipe has already done.");
+            return;
+          } else {
+            if (currentUser.recipesDone && currentUser.recipesDoneStars) {
+              const newRecipesDone: (Recipe | Recipe)[] = [
+                ...currentUser.recipesDone,
+                recipeData,
+              ];
+              const newRecipesDoneStars: number[] = [
+                ...currentUser.recipesDoneStars,
+                values.rating,
+              ];
+
+              dispatch(changeUserRecipesDone(recipeData));
+
+              dispatch(changeUserRecipesDoneStars(values.rating));
+
+              await updateDoc(userDocRef, {
+                recipesDone: newRecipesDone,
+                recipesDoneStars: newRecipesDoneStars,
+                ingredients: updatedUserIngredients,
+              });
+              alert("Recipe added.");
+            } else {
+              alert("You dont have array");
+            }
+          }
+        } catch (error) {
+          console.error("Error", error);
+        }
+      } else {
+        alert(
+          "You dont have enough ingredients to do this recipe. Please add more ingredients.",
+        );
+      }
+    } else {
+      alert("Recipe doesn't have ingredients");
+    }
+  };
 
   useEffect(() => {
     const getData = async () => {
@@ -57,7 +178,8 @@ export const RecipePage: React.FC = () => {
         let numberOfGradesValue = recipeData.numberOfGrades;
         let recipeOpnionGiversValues = recipeData.recipeGradesGivers;
         starsValue = Math.round(
-          (starsValue * numberOfGradesValue + value) / (numberOfGradesValue + 1)
+          (starsValue * numberOfGradesValue + value) /
+            (numberOfGradesValue + 1),
         );
 
         numberOfGradesValue++;
@@ -97,6 +219,18 @@ export const RecipePage: React.FC = () => {
         onMouseLeave={() => setHoveredStar(null)}
       ></img>
     ));
+  const mappedTable: (string | number)[][] | never =
+    recipeData.ingredients.reduce((acc: (string | number)[][], item, index) => {
+      if (recipeData.ingredients.length <= 1) {
+        acc.push([recipeData.ingredients[0]]);
+        return acc;
+      } else {
+        if (index % 2 === 0) {
+          acc.push([item, recipeData.ingredients[index + 1]]);
+        }
+        return acc;
+      }
+    }, []);
   return (
     <>
       <Navbar />
@@ -149,10 +283,11 @@ export const RecipePage: React.FC = () => {
             </div>
 
             <div>
-              <h1 className="mb-20px text-2xl">Ingredients:</h1>
+              <h1 className="text-2xl">Ingredients:</h1>
+              <h3 className="mb-20px">grams or pieces or ml</h3>
               <ul className="text-lg list-disc list-inside">
-                {recipeData.ingredients.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
+                {mappedTable.map((item, index) => (
+                  <li key={index}> {item[0] + " " + item[1]} </li>
                 ))}
               </ul>
             </div>
@@ -170,6 +305,40 @@ export const RecipePage: React.FC = () => {
                 {recipeData.description.split("\n").map((step, index) => (
                   <span key={index}>{step}</span>
                 ))}
+              </div>
+              <div className={"mt-40px"}>
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                  onSubmit={handleIDidRecipe}
+                >
+                  {({ errors, touched }) => (
+                    <Form>
+                      <div className="mt-10px">
+                        <label htmlFor="rating" className="text-xl">
+                          Rate this recipe only for your history (1-5):
+                        </label>
+                        <Field
+                          type="number"
+                          id="rating"
+                          name="rating"
+                          className="w-20 h-10 px-2 border text-black ml-10px mb-10px outline-none focus:outline-none"
+                        />
+                        <ErrorMessage
+                          name="rating"
+                          component="div"
+                          className="text-red-500 "
+                        />
+                      </div>
+                      {!buttonClicked && (
+                        <CustomButton buttonLabel={"I did it"} />
+                      )}
+                      {buttonClicked && (
+                        <DisabledCustomButton buttonLabel={"I did it"} />
+                      )}
+                    </Form>
+                  )}
+                </Formik>
               </div>
             </div>
           </div>

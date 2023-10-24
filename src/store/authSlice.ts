@@ -49,10 +49,28 @@ export const authSlice = createSlice({
         state.user.follows.push(action.payload);
       }
     },
+    changeUserRecipesDone: (state, action) => {
+      if (state.user) {
+        state.user.recipesDone = state.user.recipesDone || [];
+        state.user.recipesDone.push(action.payload);
+      }
+    },
+    changeUserRecipesDoneStars: (state, action) => {
+      if (state.user) {
+        state.user.recipesDoneStars = state.user.recipesDoneStars || [];
+        state.user.recipesDoneStars.push(action.payload);
+      }
+    },
     changeUserIngredients: (state, action) => {
       if (state.user) {
         state.user.ingredients = state.user.ingredients || [];
         state.user.ingredients = action.payload.ingredients;
+      }
+    },
+    changeUserWantedIngredients: (state, action) => {
+      if (state.user) {
+        state.user.wantedIngredients = state.user.wantedIngredients || [];
+        state.user.wantedIngredients = action.payload;
       }
     },
   },
@@ -65,8 +83,11 @@ export const {
   setLogout,
   changeUserBasicCredentials,
   changeUserFollows,
+  changeUserRecipesDone,
+  changeUserRecipesDoneStars,
   changeUserPhotoUrl,
   changeUserIngredients,
+  changeUserWantedIngredients,
 } = authSlice.actions;
 export const authReducer = authSlice.reducer;
 export default authReducer;

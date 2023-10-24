@@ -9,13 +9,16 @@ module.exports = {
         background: "#0A0A0A",
         dots: "#483E3A",
         myGrey: "rgb(199 197 197)",
-        dificulty: "#161618"
+        dificulty: "#161618",
       },
       maxWidth: {
         50: "50px",
         60: "60px",
         70: "70px",
         80: "80px",
+      },
+      borderWidth: {
+        1: "1px",
       },
       screens: {
         mobile: { min: "0px", max: "900px" },
@@ -61,6 +64,7 @@ module.exports = {
         "10px": "10px",
         "11px": "11px",
         "13px": "13px",
+        "18px": "18px",
         "20px": "20px",
         "22px": "22px",
         "23px": "23px",

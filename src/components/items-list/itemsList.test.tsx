@@ -13,7 +13,9 @@ describe("ItemsList Component", () => {
         label="Test Label"
         items={items}
         onButtonClick={mockOnButtonClick}
-      />
+        onButtonAddClick={mockOnButtonClick}
+        visibleAddButton={false}
+      />,
     );
 
     const labelElement = screen.getByText("Test Label");
@@ -26,7 +28,9 @@ describe("ItemsList Component", () => {
         label="Test Label"
         items={items}
         onButtonClick={mockOnButtonClick}
-      />
+        onButtonAddClick={mockOnButtonClick}
+        visibleAddButton={false}
+      />,
     );
 
     const itemElements = screen.getAllByRole("listitem");

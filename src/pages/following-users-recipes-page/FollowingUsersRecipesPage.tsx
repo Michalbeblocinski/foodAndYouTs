@@ -22,7 +22,6 @@ export const FollowingUsersRecipesPage: React.FC = () => {
   const currentUser: UserApp = useSelector(getUser) as UserApp;
 
   useEffect(() => {
-
     if (smallRecipes.length < 7) {
       setShowButtons(false);
     } else {
@@ -132,7 +131,7 @@ export const FollowingUsersRecipesPage: React.FC = () => {
           {smallRecipes
             .slice(
               (currentPage - 1) * recipesPerPage,
-              currentPage * recipesPerPage
+              currentPage * recipesPerPage,
             )
             .map((recipe) => (
               <SmallRecipeCard

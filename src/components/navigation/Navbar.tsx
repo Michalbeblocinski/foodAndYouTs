@@ -23,6 +23,7 @@ const pagesMobile = [
   "Recipes of the day",
   "Following users recipes",
   "Recipes with your ingredients",
+  "Recipes with wanted ingredients",
   "Breakfast",
   "Lunch",
   "Supper",
@@ -31,25 +32,21 @@ const Recipes = [
   "Recipes of the day",
   "Following users recipes",
   "Recipes with your ingredients",
+  "Recipes with wanted ingredients",
 ];
-const Categories = [
-  "Breakfast",
-  "Lunch",
-  "Supper",
-];
+const Categories = ["Breakfast", "Lunch", "Supper"];
 const settings = ["My Profile"];
 
 export const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
+    null,
   );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  )
-  const [anchorElCategories, setAnchorElCategories] = React.useState<null | HTMLElement>(
-      null
+    null,
   );
+  const [anchorElCategories, setAnchorElCategories] =
+    React.useState<null | HTMLElement>(null);
   const handleOpenCategoriesMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCategories(event.currentTarget);
   };
@@ -188,41 +185,46 @@ export const Navbar: React.FC = () => {
                 </Box>
                 <Box sx={{ display: { xs: "none", md: "flex" } }}>
                   <IconButton
-                      size="large"
-                      aria-label="account of current user"
-                      aria-controls="menu-categories"
-                      aria-haspopup="true"
-                      onClick={handleOpenCategoriesMenu}
-                      color="inherit"
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-categories"
+                    aria-haspopup="true"
+                    onClick={handleOpenCategoriesMenu}
+                    color="inherit"
                   >
                     <Typography textAlign="center" sx={{ fontSize: "14px" }}>
                       CATEGORIES
                     </Typography>
                   </IconButton>
                   <Menu
-                      id="menu-categories"
-                      anchorEl={anchorElCategories}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                      keepMounted
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
-                      }}
-                      open={Boolean(anchorElCategories)}
-                      onClose={() => setAnchorElCategories(null)}
-                      sx={{
-                        display: { xs: "none", md: "block" },
-                      }}
+                    id="menu-categories"
+                    anchorEl={anchorElCategories}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    open={Boolean(anchorElCategories)}
+                    onClose={() => setAnchorElCategories(null)}
+                    sx={{
+                      display: { xs: "none", md: "block" },
+                    }}
                   >
                     {Categories.map((page) => (
-                        <MenuItem key={page} onClick={() => setAnchorElCategories(null)}>
-                          <Link to={`/${page.toLowerCase().replace(/\s+/g, "-")}`}>
-                            <Typography textAlign="center">{page}</Typography>
-                          </Link>
-                        </MenuItem>
+                      <MenuItem
+                        key={page}
+                        onClick={() => setAnchorElCategories(null)}
+                      >
+                        <Link
+                          to={`/${page.toLowerCase().replace(/\s+/g, "-")}`}
+                        >
+                          <Typography textAlign="center">{page}</Typography>
+                        </Link>
+                      </MenuItem>
                     ))}
                   </Menu>
                 </Box>

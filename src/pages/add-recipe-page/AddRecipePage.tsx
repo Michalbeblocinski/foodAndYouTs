@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "../../components/navigation";
 import { ButtonCard } from "../../components/button-card";
 import { ItemsList } from "../../components/items-list";
 import { ProfilePhotoButton } from "../../components/profile-photo-button";
 import main from "../../utils/mainphoto.png";
-import {CategoryForm, InfoForm, TitleForm} from "./form";
+import { CategoryForm, InfoForm, TitleForm } from "./form";
 import { IngredientForm } from "./form/IngredientForm";
 import { db } from "../../firebaseConfig/config";
 import { addDoc, collection } from "firebase/firestore";
@@ -20,14 +20,16 @@ export const AddRecipePage: React.FC = () => {
   const [timeRecipe, setTimeRecipe] = useState<number>(0);
   const [descriptionRecipe, setDescriptionRecipe] = useState<string>("");
   const [photoUrl, setPhotoUrl] = useState<string>(main);
-  const [items, setItems] = useState<Array<string>>([
+  const [items, setItems] = useState<Array<string | number>>([
     "You dont have ingredients",
   ]);
   const navigate = useNavigate();
-  const handleAddIngredient = (newItem: string) => {
-    let tmpIngredientsArray = [...items, newItem];
+  const handleAddIngredient = (newItem: string, newItemWeight: number) => {
+    let tmpIngredientsArray: (string | number)[] = items;
+    tmpIngredientsArray.push(newItem);
+    tmpIngredientsArray.push(parseInt(String(newItemWeight)));
     let tmp2IngredientsArray = tmpIngredientsArray.filter(
-      (element) => element !== "You dont have ingredients"
+      (element) => element !== "You dont have ingredients",
     );
     setItems(tmp2IngredientsArray);
   };
@@ -45,8 +47,11 @@ export const AddRecipePage: React.FC = () => {
       lastName: user.lastName || null,
       photoUrl: user.photoUrl || null,
       ingredients: user.ingredients || [],
+      wantedIngredients: user.wantedIngredients || [],
       recipes: user.recipes || [],
       role: user.role || "",
+      recipesDone: user.recipesDone || null,
+      recipesDoneStars: user.recipesDoneStars || null,
     };
 
     return normalizedUser;
@@ -76,8 +81,8 @@ export const AddRecipePage: React.FC = () => {
       try {
         const docRef = await addDoc(collection(db, "recipes"), recipe);
         alert("Recipe was added with id: " + docRef.id);
-        setDificultyState("Easy")
-        setCategoryState("Lunch")
+        setDificultyState("Easy");
+        setCategoryState("Lunch");
         setTitleRecipe("");
         setTimeRecipe(0);
         setDescriptionRecipe("");
@@ -91,20 +96,28 @@ export const AddRecipePage: React.FC = () => {
     }
   };
   const handleDeleteOneInggredient = (item: string) => {
-    let tmpIngredientsArrayWithoutOne = items.filter(
-      (element) => element !== item
-    );
-    if (tmpIngredientsArrayWithoutOne.length === 0) {
+    let tmpIngredientsArrayWithoutTwo = [];
+    for (let i = 0; i < items.length; i = i + 2) {
+      if (items[i] !== item) {
+        tmpIngredientsArrayWithoutTwo.push(items[i]);
+        tmpIngredientsArrayWithoutTwo.push(items[i + 1]);
+      }
+    }
+
+    if (tmpIngredientsArrayWithoutTwo.length === 0) {
       setItems(["You dont have ingredients"]);
     } else {
-      setItems(tmpIngredientsArrayWithoutOne);
+      setItems(tmpIngredientsArrayWithoutTwo);
     }
   };
   const handleTitleChange = (titleValue: string, timeValue: number) => {
     setTitleRecipe(titleValue);
     setTimeRecipe(timeValue);
-
-  };  const handleCategoryChange = (dificultyValue: string,categoryValue: string) => {
+  };
+  const handleCategoryChange = (
+    dificultyValue: string,
+    categoryValue: string,
+  ) => {
     setCategoryState(categoryValue);
     setDificultyState(dificultyValue);
   };
@@ -129,7 +142,8 @@ export const AddRecipePage: React.FC = () => {
             </div>
             <TitleForm onTitleChange={handleTitleChange} />
           </div>
-        </div> <div className="grid gap-24px lg:grid-cols-1 mb-24px">
+        </div>{" "}
+        <div className="grid gap-24px lg:grid-cols-1 mb-24px">
           <div className="lg:col-span-1 h-156px bg-primaryOpacity p-20px relative text-white">
             <div className="mb-10px">
               <h1 className="text-2xl">Informations</h1>
@@ -142,6 +156,8 @@ export const AddRecipePage: React.FC = () => {
             label="Your Ingredients"
             items={items}
             onButtonClick={handleDeleteOneInggredient}
+            onButtonAddClick={handleDeleteOneInggredient}
+            visibleAddButton={false}
           />
           <div className="lg:col-span-4 h-350px">
             <IngredientForm onIngredientChange={handleAddIngredient} />

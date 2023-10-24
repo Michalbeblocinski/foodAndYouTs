@@ -41,7 +41,7 @@ export const RegistrationForm: React.FC = () => {
     try {
       const userCredential = await createAuthUserWithEmailAndPassword(
         email,
-        password
+        password,
       );
 
       if (!userCredential) {
@@ -56,13 +56,16 @@ export const RegistrationForm: React.FC = () => {
           lastName: null,
           photoUrl: null,
           ingredients: null,
+          wantedIngredients: null,
           recipes: null,
           follows: [],
           role: "User",
-        })
+          recipesDone: [],
+          recipesDoneStars: [],
+        }),
       );
 
-      await createUserDocumentFromAuth(user, "User",{ username });
+      await createUserDocumentFromAuth(user, "User", [], [], { username });
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         if (error.code === "auth/email-already-in-use") {
@@ -81,7 +84,7 @@ export const RegistrationForm: React.FC = () => {
       .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-        "Password must contain at least one uppercase letter and one digit"
+        "Password must contain at least one uppercase letter and one digit",
       ),
     repeatpassword: yup
       .string()

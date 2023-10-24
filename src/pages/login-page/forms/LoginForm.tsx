@@ -36,7 +36,7 @@ export const LoginForm: React.FC = () => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
 
       if (userCredential.user) {
@@ -53,9 +53,12 @@ export const LoginForm: React.FC = () => {
             lastName: userData.lastName,
             photoUrl: userData.photoUrl,
             ingredients: userData.ingredients,
+            wantedIngredients: userData.wantedIngredients,
             recipes: userData.recipes,
             follows: userData.follows,
             role: userData.role,
+            recipesDone: userData.recipesDone,
+            recipesDoneStars: userData.recipesDoneStars || null,
           };
           dispatch(setLogin(loggedUser));
         }

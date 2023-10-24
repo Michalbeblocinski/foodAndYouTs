@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { getUser } from "../../store/authSlice";
 import { UserApp } from "../../utils/types/user";
 
-export const RecipesWithYourIngredientsPage: React.FC = () => {
+export const RecipesWithWantedIngredientsPage: React.FC = () => {
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
   const [hugeRecipe, setHugeRecipe] = useState<Recipe | null>();
   const [mediumRecipes, setMediumRecipes] = useState<Recipe | null>();
@@ -37,8 +37,8 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
   };
 
   const canUserMakeRecipe = (recipe: Recipe): boolean => {
-    if (currentUser && currentUser.ingredients) {
-      if (currentUser.ingredients.length % 2 !== 0) {
+    if (currentUser && currentUser.wantedIngredients) {
+      if (currentUser.wantedIngredients.length % 2 !== 0) {
         // User ingredients should be in pairs [ingredient, weight]
         return false;
       }
@@ -47,7 +47,7 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
         const ingredientName = recipe.ingredients[i];
         const requiredWeight = recipe.ingredients[i + 1];
 
-        const userIngredientIndex = currentUser.ingredients.findIndex(
+        const userIngredientIndex = currentUser.wantedIngredients.findIndex(
           (userIngredient, index) => {
             if (index % 2 === 0) {
               // User ingredients are in pairs, so compare only ingredient names
@@ -63,7 +63,7 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
         }
 
         const userIngredientWeight =
-          currentUser.ingredients[userIngredientIndex + 1];
+          currentUser.wantedIngredients[userIngredientIndex + 1];
 
         if (userIngredientWeight < requiredWeight) {
           // User doesn't have enough of the required ingredient
@@ -125,7 +125,7 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
           after:absolute after:left-[calc(50%-161px)] after:bottom-!15px after:bg-white  after:w-322px after:h-2px"
         >
           <h1 className="text-xl text-center">
-            Recipes with your ingredients:
+            Recipes with wanted ingredients:
           </h1>
         </div>
         <img
