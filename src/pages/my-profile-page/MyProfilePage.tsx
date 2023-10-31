@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Navbar } from "../../components/navigation";
+import {
+  Navbar,
+  ProfilePhotoButton,
+  ButtonCard,
+  ItemsList,
+  ItemsListRecipes,
+} from "../../components";
 import { GeneralInfoForm } from "./form";
-import { ProfilePhotoButton } from "../../components/profile-photo-button";
 import profile from "../../utils/profile.png";
-import { ButtonCard } from "../../components/button-card";
-import { ItemsList } from "../../components/items-list";
 import { useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import ScaleIcon from "@mui/icons-material/Scale";
+import Modal from "@mui/material/Modal";
 import {
   changeUserIngredients,
   changeUserWantedIngredients,
@@ -16,7 +23,6 @@ import { Link } from "react-router-dom";
 import { IngredientForm } from "../add-recipe-page/form/IngredientForm";
 import starWhite from "../../utils/starWhite.svg";
 import starBorderOnly from "../../utils/starBorderOnly.svg";
-
 import {
   collection,
   deleteDoc,
@@ -26,7 +32,46 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig/config";
 import { Recipe } from "../../utils/types/recipe";
-import { ItemsListRecipes } from "../../components/items-list-recipes";
+import { createTheme, TextField, ThemeProvider } from "@mui/material";
+import Button from "@mui/material/Button";
+
+const modalStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "#161618",
+  border: "1px solid #fff",
+  color: "white",
+  boxShadow: 24,
+  display: "flex",
+  flexDirection: "column",
+  p: 4,
+};
+const theme = createTheme({
+  components: {
+    MuiInput: {
+      styleOverrides: {
+        underline: {
+          "&:before": {
+            borderBottomColor: "white",
+          },
+          "&:after": {
+            borderBottomColor: "white",
+          },
+          "&:hover:before": {
+            borderBottomColor: "white",
+          },
+        },
+      },
+    },
+  },
+});
+
+const labelStyle = {
+  color: "#fff",
+};
 
 export const MyProfilePage: React.FC = () => {
   const currentUser: UserApp | null = useSelector(getUser);
@@ -38,7 +83,11 @@ export const MyProfilePage: React.FC = () => {
   const [wantedIngredients, setWantedIngredients] = useState<
     Array<string | number>
   >([]);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [modalWeight, setModalWeight] = React.useState<number>(0);
+  const [itemToAdd, setItemToAdd] = React.useState<string>("");
 
+  const handleClose = () => setOpen(false);
   const handleDeleteRecipe = async (recipeTitle: string) => {
     const foundRecipe = recipes.find((recipe) => recipe.title === recipeTitle);
     if (foundRecipe) {
@@ -98,15 +147,31 @@ export const MyProfilePage: React.FC = () => {
     }
   }, []);
 
-  const handleAddIngredientToWantedIngredients = (item: string) => {
+  const modalOpen = (item: string) => {
+    setItemToAdd(item);
+    setOpen(true);
+  };
+  const handleAddIngredientToWantedIngredients = (modalWeight: number) => {
     let tmpWantedIngredients: (string | number)[] = [...wantedIngredients];
+    let weight = 0;
+    if (modalWeight > 0) {
+      weight = modalWeight;
+    }
+
+    let item = itemToAdd;
+
     for (let i = 0; i < items.length; i = i + 2) {
       if (items[i] == item) {
         tmpWantedIngredients.push(items[i]);
-        tmpWantedIngredients.push(items[i + 1]);
+        if (items[i + 1] >= weight) {
+          tmpWantedIngredients.push(weight);
+        } else {
+          tmpWantedIngredients.push(items[i + 1]);
+        }
       }
     }
     setWantedIngredients(tmpWantedIngredients);
+    setModalWeight(0);
   };
   useEffect(() => {
     if (currentUser) {
@@ -119,6 +184,7 @@ export const MyProfilePage: React.FC = () => {
     for (let i = 0; i < wantedIngredients.length; i = i + 2) {
       if (wantedIngredients[i] !== item) {
         tmpWantedIngredientsDelete.push(wantedIngredients[i]);
+
         tmpWantedIngredientsDelete.push(wantedIngredients[i + 1]);
       }
     }
@@ -140,6 +206,19 @@ export const MyProfilePage: React.FC = () => {
       setItems(["You dont have ingredients"]);
     } else {
       setItems(tmpIngredientsArrayWithoutTwo);
+    }
+
+    let tmpWantedIngredientsDelete = [];
+    for (let i = 0; i < wantedIngredients.length; i = i + 2) {
+      if (wantedIngredients[i] !== item) {
+        tmpWantedIngredientsDelete.push(wantedIngredients[i]);
+        tmpWantedIngredientsDelete.push(wantedIngredients[i + 1]);
+      }
+    }
+    if (tmpWantedIngredientsDelete.length === 0) {
+      setWantedIngredients([]);
+    } else {
+      setWantedIngredients(tmpWantedIngredientsDelete);
     }
     try {
       if (currentUser) {
@@ -197,12 +276,56 @@ export const MyProfilePage: React.FC = () => {
     } catch (error) {
       console.error("Error updating profile", error);
     }
-
+    setWantedIngredients([]);
     setItems(["You dont have ingredients"]);
   };
 
   return (
     <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            How much?
+          </Typography>
+          <ThemeProvider theme={theme}>
+            <TextField
+              id="outlined-number"
+              label="Number"
+              type="number"
+              variant="standard"
+              sx={{ marginY: "20px", color: "white", border: "white" }}
+              InputProps={{ style: { color: "#fff", padding: "6px" } }}
+              InputLabelProps={{ style: labelStyle }}
+              onChange={(e) => setModalWeight(parseInt(e.target.value))}
+            />
+          </ThemeProvider>
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={() => {
+              handleClose();
+              handleAddIngredientToWantedIngredients(modalWeight);
+            }}
+            sx={{
+              color: "white",
+              border: "1px solid white",
+              "&:hover": {
+                backgroundColor: "rgba(59,58,58,0.32)",
+                borderColor: "#fff",
+                boxShadow: "none",
+              },
+            }}
+            startIcon={<ScaleIcon />}
+          >
+            Add Ingredient
+          </Button>
+        </Box>
+      </Modal>
       <Navbar />
       <div
         className="container mx-auto px-4 relative z-10 my-37px"
@@ -258,7 +381,7 @@ export const MyProfilePage: React.FC = () => {
             label="Your Ingredients"
             items={items}
             onButtonClick={handleDeleteOneInggredient}
-            onButtonAddClick={handleAddIngredientToWantedIngredients}
+            onButtonAddClick={modalOpen}
             visibleAddButton={true}
           />
           <div className="lg:col-span-4 h-350px">

@@ -12,6 +12,7 @@ import { db } from "../../firebaseConfig/config";
 import { useSelector } from "react-redux";
 import { getUser } from "../../store/authSlice";
 import { UserApp } from "../../utils/types/user";
+import { text } from "stream/consumers";
 
 export const RecipesWithWantedIngredientsPage: React.FC = () => {
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
@@ -39,7 +40,6 @@ export const RecipesWithWantedIngredientsPage: React.FC = () => {
   const canUserMakeRecipe = (recipe: Recipe): boolean => {
     if (currentUser && currentUser.wantedIngredients) {
       if (currentUser.wantedIngredients.length % 2 !== 0) {
-        // User ingredients should be in pairs [ingredient, weight]
         return false;
       }
 
@@ -50,7 +50,6 @@ export const RecipesWithWantedIngredientsPage: React.FC = () => {
         const userIngredientIndex = currentUser.wantedIngredients.findIndex(
           (userIngredient, index) => {
             if (index % 2 === 0) {
-              // User ingredients are in pairs, so compare only ingredient names
               return userIngredient === ingredientName;
             }
             return false;
@@ -58,7 +57,6 @@ export const RecipesWithWantedIngredientsPage: React.FC = () => {
         );
 
         if (userIngredientIndex === -1) {
-          // User doesn't have the required ingredient
           return false;
         }
 
@@ -66,12 +64,10 @@ export const RecipesWithWantedIngredientsPage: React.FC = () => {
           currentUser.wantedIngredients[userIngredientIndex + 1];
 
         if (userIngredientWeight < requiredWeight) {
-          // User doesn't have enough of the required ingredient
           return false;
         }
       }
 
-      // All required ingredients are present in sufficient quantities
       return true;
     } else return false;
   };
@@ -150,6 +146,13 @@ export const RecipesWithWantedIngredientsPage: React.FC = () => {
               numberOfOpinions={hugeRecipe.numberOfGrades}
               difficulty={hugeRecipe.difficulty}
             />
+          )}
+          {!hugeRecipe && (
+            <div
+              className={"text-white absolute text-3xl left-[calc(50%-114px)]"}
+            >
+              No recipe found
+            </div>
           )}
 
           {mediumRecipes && (

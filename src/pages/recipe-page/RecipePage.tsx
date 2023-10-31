@@ -11,6 +11,7 @@ import {
   changeUserIngredients,
   changeUserRecipesDone,
   changeUserRecipesDoneStars,
+  changeUserWantedIngredients,
   getUser,
   setLogin,
 } from "../../store/authSlice";
@@ -34,6 +35,9 @@ export const RecipePage: React.FC = () => {
   const [userIngredients, setUserIngredients] = useState<any[]>(
     currentUser.ingredients || [],
   );
+  const [userWantedIngredients, setUserWantedIngredients] = useState<any[]>(
+    currentUser.wantedIngredients || [],
+  );
   const initialValues = {
     rating: 5,
   };
@@ -51,15 +55,19 @@ export const RecipePage: React.FC = () => {
       const requiredIngredients: Array<string> = recipeData.ingredients;
 
       const updatedUserIngredients = [...userIngredients];
+      const updatedUserWantedIngredients = [...userWantedIngredients];
 
       const hasEnoughIngredients: boolean = requiredIngredients.every(
         (ingredient: string, index: number) => {
           if (index % 2 === 0) {
             const ingredientName: string = ingredient;
             const userIngredients: any[] = updatedUserIngredients;
+            const wantedIngredients: any[] = updatedUserWantedIngredients;
 
             const userIngredientIndex: number =
               userIngredients.indexOf(ingredientName);
+            const userWantedIngredientIndex: number =
+              wantedIngredients.indexOf(ingredientName);
 
             if (userIngredientIndex !== -1) {
               const ingredientAmount: string = requiredIngredients[index + 1];
@@ -68,10 +76,21 @@ export const RecipePage: React.FC = () => {
               ) {
                 const amountToSubtract = parseInt(ingredientAmount);
 
-                userIngredients[userIngredientIndex + 1] -= amountToSubtract;
+                updatedUserIngredients[userIngredientIndex + 1] -=
+                  amountToSubtract;
+
+                updatedUserWantedIngredients[userWantedIngredientIndex + 1] -=
+                  amountToSubtract;
+
+                if (wantedIngredients[userWantedIngredientIndex + 1] <= 0) {
+                  updatedUserWantedIngredients.splice(
+                    userWantedIngredientIndex,
+                    2,
+                  );
+                }
 
                 if (userIngredients[userIngredientIndex + 1] <= 0) {
-                  userIngredients.splice(userIngredientIndex, 2);
+                  updatedUserIngredients.splice(userIngredientIndex, 2);
                 }
               } else {
                 return false;
@@ -88,6 +107,7 @@ export const RecipePage: React.FC = () => {
         dispatch(
           changeUserIngredients({ ingredients: updatedUserIngredients }),
         );
+        dispatch(changeUserWantedIngredients(updatedUserWantedIngredients));
 
         setStarsState(values.rating);
         try {

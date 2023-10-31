@@ -151,6 +151,13 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
               difficulty={hugeRecipe.difficulty}
             />
           )}
+          {!hugeRecipe && (
+            <div
+              className={"text-white absolute text-3xl left-[calc(50%-114px)]"}
+            >
+              No recipe found
+            </div>
+          )}
 
           {mediumRecipes && (
             <MediumRecipeCard

@@ -103,6 +103,13 @@ export const MainPage: React.FC = () => {
               difficulty={hugeRecipe.difficulty}
             />
           )}
+          {!hugeRecipe && (
+            <div
+              className={"text-white absolute text-3xl left-[calc(50%-114px)]"}
+            >
+              No recipe found
+            </div>
+          )}
 
           {mediumRecipes && (
             <MediumRecipeCard
@@ -121,7 +128,7 @@ export const MainPage: React.FC = () => {
           {smallRecipes
             .slice(
               (currentPage - 1) * recipesPerPage,
-              currentPage * recipesPerPage
+              currentPage * recipesPerPage,
             )
             .map((recipe) => (
               <SmallRecipeCard

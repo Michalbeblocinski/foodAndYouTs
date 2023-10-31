@@ -23,6 +23,26 @@ html {
   cursor: pointer !important;
 }
 
-.white-select svg{
-    color: white !important;
+.white-select svg {
+  color: white !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:first-line,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(28, 29, 33, 1) inset !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.bg-primaryOpacity input:-webkit-autofill,
+.bg-primaryOpacity input:-webkit-autofill:hover,
+.bg-primaryOpacity input:-webkit-autofill:focus,
+.bg-primaryOpacity input:-webkit-autofill:first-line,
+.bg-primaryOpacity input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(22, 22, 25, 1) inset !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important;
 }
