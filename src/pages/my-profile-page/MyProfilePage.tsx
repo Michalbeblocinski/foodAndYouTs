@@ -105,6 +105,7 @@ export const MyProfilePage: React.FC = () => {
       }
     }
   };
+
   const handleGenerateShoppingList = () => {};
   const fetchData = async () => {
     try {
@@ -160,13 +161,16 @@ export const MyProfilePage: React.FC = () => {
 
     let item = itemToAdd;
 
-    for (let i = 0; i < items.length; i = i + 2) {
-      if (items[i] == item) {
+    for (let i = 0; i < items.length; i = i + 3) {
+      if (items[i] == item[0]) {
         tmpWantedIngredients.push(items[i]);
+
         if (items[i + 1] >= weight) {
           tmpWantedIngredients.push(weight);
+          tmpWantedIngredients.push(items[i + 2]);
         } else {
           tmpWantedIngredients.push(items[i + 1]);
+          tmpWantedIngredients.push(items[i + 2]);
         }
       }
     }
@@ -181,11 +185,12 @@ export const MyProfilePage: React.FC = () => {
 
   const handleDeleteOneWantedInggredient = (item: string) => {
     let tmpWantedIngredientsDelete = [];
-    for (let i = 0; i < wantedIngredients.length; i = i + 2) {
+    for (let i = 0; i < wantedIngredients.length; i = i + 3) {
       if (wantedIngredients[i] !== item) {
         tmpWantedIngredientsDelete.push(wantedIngredients[i]);
 
         tmpWantedIngredientsDelete.push(wantedIngredients[i + 1]);
+        tmpWantedIngredientsDelete.push(wantedIngredients[i + 2]);
       }
     }
     if (tmpWantedIngredientsDelete.length === 0) {
@@ -196,10 +201,11 @@ export const MyProfilePage: React.FC = () => {
   };
   const handleDeleteOneInggredient = async (item: string) => {
     let tmpIngredientsArrayWithoutTwo = [];
-    for (let i = 0; i < items.length; i = i + 2) {
+    for (let i = 0; i < items.length; i = i + 3) {
       if (items[i] !== item) {
         tmpIngredientsArrayWithoutTwo.push(items[i]);
         tmpIngredientsArrayWithoutTwo.push(items[i + 1]);
+        tmpIngredientsArrayWithoutTwo.push(items[i + 2]);
       }
     }
     if (tmpIngredientsArrayWithoutTwo.length === 0) {
@@ -209,10 +215,11 @@ export const MyProfilePage: React.FC = () => {
     }
 
     let tmpWantedIngredientsDelete = [];
-    for (let i = 0; i < wantedIngredients.length; i = i + 2) {
+    for (let i = 0; i < wantedIngredients.length; i = i + 3) {
       if (wantedIngredients[i] !== item) {
         tmpWantedIngredientsDelete.push(wantedIngredients[i]);
         tmpWantedIngredientsDelete.push(wantedIngredients[i + 1]);
+        tmpWantedIngredientsDelete.push(wantedIngredients[i + 2]);
       }
     }
     if (tmpWantedIngredientsDelete.length === 0) {
@@ -237,10 +244,12 @@ export const MyProfilePage: React.FC = () => {
   const handleAddIngredient = async (
     newItem: string,
     newItemWeight: number,
+    newItemUnit: string,
   ) => {
     let tmpIngredientsArray: (string | number)[] = [...items];
     tmpIngredientsArray.push(newItem);
     tmpIngredientsArray.push(parseInt(String(newItemWeight)));
+    tmpIngredientsArray.push(newItemUnit);
 
     let tmp2IngredientsArray: (string | number)[] = tmpIngredientsArray.filter(
       (element) => element !== "You dont have ingredients",

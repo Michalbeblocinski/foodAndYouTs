@@ -59,7 +59,7 @@ export const RecipePage: React.FC = () => {
 
       const hasEnoughIngredients: boolean = requiredIngredients.every(
         (ingredient: string, index: number) => {
-          if (index % 2 === 0) {
+          if (index % 3 === 0) {
             const ingredientName: string = ingredient;
             const userIngredients: any[] = updatedUserIngredients;
             const wantedIngredients: any[] = updatedUserWantedIngredients;
@@ -78,19 +78,20 @@ export const RecipePage: React.FC = () => {
 
                 updatedUserIngredients[userIngredientIndex + 1] -=
                   amountToSubtract;
+                if (userWantedIngredientIndex !== -1) {
+                  updatedUserWantedIngredients[userWantedIngredientIndex + 1] -=
+                    amountToSubtract;
 
-                updatedUserWantedIngredients[userWantedIngredientIndex + 1] -=
-                  amountToSubtract;
-
-                if (wantedIngredients[userWantedIngredientIndex + 1] <= 0) {
-                  updatedUserWantedIngredients.splice(
-                    userWantedIngredientIndex,
-                    2,
-                  );
+                  if (wantedIngredients[userWantedIngredientIndex + 1] <= 0) {
+                    updatedUserWantedIngredients.splice(
+                      userWantedIngredientIndex,
+                      3,
+                    );
+                  }
                 }
 
                 if (userIngredients[userIngredientIndex + 1] <= 0) {
-                  updatedUserIngredients.splice(userIngredientIndex, 2);
+                  updatedUserIngredients.splice(userIngredientIndex, 3);
                 }
               } else {
                 return false;
@@ -245,8 +246,12 @@ export const RecipePage: React.FC = () => {
         acc.push([recipeData.ingredients[0]]);
         return acc;
       } else {
-        if (index % 2 === 0) {
-          acc.push([item, recipeData.ingredients[index + 1]]);
+        if (index % 3 === 0) {
+          acc.push([
+            item,
+            recipeData.ingredients[index + 1],
+            recipeData.ingredients[index + 2],
+          ]);
         }
         return acc;
       }
@@ -303,11 +308,13 @@ export const RecipePage: React.FC = () => {
             </div>
 
             <div>
-              <h1 className="text-2xl">Ingredients:</h1>
-              <h3 className="mb-20px">grams or pieces or ml</h3>
+              <h1 className="text-2xl mb-15px">Ingredients:</h1>
               <ul className="text-lg list-disc list-inside">
                 {mappedTable.map((item, index) => (
-                  <li key={index}> {item[0] + " " + item[1]} </li>
+                  <li key={index}>
+                    {" "}
+                    {item[0] + " " + item[1] + " " + item[2]}{" "}
+                  </li>
                 ))}
               </ul>
             </div>

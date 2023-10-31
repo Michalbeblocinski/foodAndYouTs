@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Navbar } from "../../components/navigation";
-import { ButtonCard } from "../../components/button-card";
-import { ItemsList } from "../../components/items-list";
-import { ProfilePhotoButton } from "../../components/profile-photo-button";
+import {
+  Navbar,
+  ButtonCard,
+  ItemsList,
+  ProfilePhotoButton,
+} from "../../components/";
 import main from "../../utils/mainphoto.png";
 import { CategoryForm, InfoForm, TitleForm } from "./form";
 import { IngredientForm } from "./form/IngredientForm";
@@ -24,13 +26,19 @@ export const AddRecipePage: React.FC = () => {
     "You dont have ingredients",
   ]);
   const navigate = useNavigate();
-  const handleAddIngredient = (newItem: string, newItemWeight: number) => {
+  const handleAddIngredient = (
+    newItem: string,
+    newItemWeight: number,
+    newItemUnit: string,
+  ): void => {
     let tmpIngredientsArray: (string | number)[] = items;
     tmpIngredientsArray.push(newItem);
     tmpIngredientsArray.push(parseInt(String(newItemWeight)));
+    tmpIngredientsArray.push(newItemUnit);
     let tmp2IngredientsArray = tmpIngredientsArray.filter(
       (element) => element !== "You dont have ingredients",
     );
+
     setItems(tmp2IngredientsArray);
   };
   const user = useSelector(getUser);
@@ -97,10 +105,11 @@ export const AddRecipePage: React.FC = () => {
   };
   const handleDeleteOneInggredient = (item: string) => {
     let tmpIngredientsArrayWithoutTwo = [];
-    for (let i = 0; i < items.length; i = i + 2) {
+    for (let i = 0; i < items.length; i = i + 3) {
       if (items[i] !== item) {
         tmpIngredientsArrayWithoutTwo.push(items[i]);
         tmpIngredientsArrayWithoutTwo.push(items[i + 1]);
+        tmpIngredientsArrayWithoutTwo.push(items[i + 2]);
       }
     }
 

@@ -38,19 +38,20 @@ export const RecipesWithYourIngredientsPage: React.FC = () => {
 
   const canUserMakeRecipe = (recipe: Recipe): boolean => {
     if (currentUser && currentUser.ingredients) {
-      if (currentUser.ingredients.length % 2 !== 0) {
-        // User ingredients should be in pairs [ingredient, weight]
+      if (currentUser.ingredients.length % 3 !== 0) {
+        // User ingredients should be  [ingredient, weight, unit]
         return false;
       }
 
-      for (let i = 0; i < recipe.ingredients.length; i += 2) {
+      for (let i = 0; i < recipe.ingredients.length; i += 3) {
         const ingredientName = recipe.ingredients[i];
         const requiredWeight = recipe.ingredients[i + 1];
+        const requiredUnit = recipe.ingredients[i + 2];
 
         const userIngredientIndex = currentUser.ingredients.findIndex(
           (userIngredient, index) => {
-            if (index % 2 === 0) {
-              // User ingredients are in pairs, so compare only ingredient names
+            if (index % 3 === 0) {
+              // User ingredients are in [ingredient, weight, unit], so compare only ingredient names
               return userIngredient === ingredientName;
             }
             return false;

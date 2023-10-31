@@ -1,21 +1,36 @@
 import React, { useState } from "react";
-import { Button, TextField, createTheme, ThemeProvider } from "@mui/material";
+import {
+  Button,
+  TextField,
+  createTheme,
+  ThemeProvider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as yup from "yup";
 
 type IngredientProps = {
-  onIngredientChange: (ingredient: string, weight: number) => void;
+  onIngredientChange: (
+    ingredient: string,
+    weight: number,
+    unit: string,
+  ) => void;
 };
 
 export const IngredientForm: React.FC<IngredientProps> = ({
   onIngredientChange,
 }) => {
   const [ingredient, setIngredient] = useState<string>("");
+  const [unit, setUnit] = useState<string>("Grams");
   const [weight, setWeight] = useState<number | undefined>(0);
 
   const initialValues = {
     IngredientInput: ingredient,
     WeightInput: weight,
+    UnitInput: unit,
   };
 
   const validationSchema = yup.object().shape({
@@ -27,11 +42,17 @@ export const IngredientForm: React.FC<IngredientProps> = ({
   });
 
   const inputStyle = {
-    width: "80%",
+    width: "40%",
   };
 
   const labelStyle = {
     color: "#fff",
+  };
+
+  const inputStyleSelect = {
+    width: "25vw",
+    maxWidth: "100px",
+    color: "white",
   };
 
   const theme = createTheme({
@@ -60,7 +81,12 @@ export const IngredientForm: React.FC<IngredientProps> = ({
   const handleIngredientSubmit = (values: any) => {
     setIngredient(values.IngredientInput);
     setWeight(values.WeightInput);
-    onIngredientChange(values.IngredientInput, values.WeightInput);
+    setUnit(values.UnitInput);
+    onIngredientChange(
+      values.IngredientInput,
+      values.WeightInput,
+      values.UnitInput,
+    );
   };
 
   return (
@@ -93,7 +119,7 @@ export const IngredientForm: React.FC<IngredientProps> = ({
                 <Field
                   as={TextField}
                   onBlur={handleBlur}
-                  label="Weight (grams)"
+                  label="Weight"
                   variant="standard"
                   name="WeightInput"
                   id="WeightInput"
@@ -105,6 +131,22 @@ export const IngredientForm: React.FC<IngredientProps> = ({
                     style: { color: "#fff", padding: "6px", width: "80%" },
                   }}
                 />
+
+                <FormControl variant="standard">
+                  <InputLabel style={labelStyle}>Unit</InputLabel>
+                  <Field
+                    as={Select}
+                    name="UnitInput"
+                    id="UnitInput"
+                    label="Unit"
+                    className="white-select"
+                    style={inputStyleSelect}
+                  >
+                    <MenuItem value="Grams">Grams</MenuItem>
+                    <MenuItem value="Pieces">Pieces</MenuItem>
+                    <MenuItem value="Ml">Ml</MenuItem>
+                  </Field>
+                </FormControl>
               </div>
             </ThemeProvider>
 
